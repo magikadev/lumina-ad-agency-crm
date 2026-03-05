@@ -1,201 +1,123 @@
-# Lumina CRM - Ad Agency Customer Relationship Management System
+# Lumina CRM
 
-A modern, full-featured CRM application built for advertising agencies to manage their client pipeline and track business performance. Built with React, TypeScript, Tailwind CSS, and Zustand for state management.
+Lumina CRM is a React + TypeScript CRM MVP for agencies, with lead management, a visual pipeline board, and analytics dashboards.
 
-![Lumina CRM](https://img.shields.io/badge/React-18.3.1-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-blue)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.14-blue)
+## What It Includes
 
-## ✨ Features
+- Dashboard with KPI cards and opportunity highlights
+- Leads management with create, update, delete, search, and status filter
+- Drag-and-drop pipeline board built with dnd-kit
+- Analytics page with industry and pipeline distribution charts
+- Zustand store with selectors and persisted UI state
+- Supabase integration with realtime updates when configured
+- Automatic mock-mode fallback when Supabase credentials are missing
 
-### 📊 Analytics Dashboard
-- **Real-time Metrics**: Track total pipeline value, active leads, conversion rate, and average deal size
-- **Interactive Charts**: Visual representation of revenue trends and pipeline distribution by status
-- **High-Value Leads**: Quick access to your most valuable opportunities
-- **Attention Alerts**: Automated notifications for leads requiring follow-up
-- **Recent Activity**: Timeline of recent deal closures and updates
+## Tech Stack
 
-### 👥 Lead Management
-- **Complete CRUD Operations**: Add, edit, delete, and view customer leads
-- **Advanced Filtering**: Search by name, company, or email with real-time filtering
-- **Status Tracking**: Track leads through their lifecycle (New → Contacted → Qualified → Proposal → Negotiation → Won/Lost)
-- **Lead Scoring**: Visual scoring system (0-100%) to prioritize opportunities
-- **Deal Value Tracking**: Monitor potential revenue for each opportunity
-- **Contact Information**: Store comprehensive customer details including industry, notes, and contact dates
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand (+ persist middleware)
+- Supabase JS client
+- Recharts
+- Framer Motion
+- dnd-kit
+- Lucide React
 
-### 💾 Data Persistence
-- **LocalStorage Integration**: All data persists across browser sessions using Zustand's persist middleware
-- **Sample Data**: Pre-loaded with realistic sample leads for immediate testing
-- **State Management**: Centralized state using Zustand for optimal performance
+## Run Locally
 
-### 🎨 Modern UI/UX
-- **Dark Theme**: Eye-friendly dark mode interface
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Smooth Animations**: Framer Motion-powered transitions and interactions
-- **Glass Morphism**: Modern glass-panel design aesthetic
-- **Interactive Components**: Hover effects, dropdowns, and modals for enhanced UX
+1. Install dependencies:
 
-## 🚀 Getting Started
+```bash
+npm install
+```
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+2. Start development server:
 
-### Installation
+```bash
+npm run dev
+```
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+3. Open:
 
-2. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
+```text
+http://localhost:5173
+```
 
-3. **Open in Browser**
-   Navigate to `http://localhost:5173` (or the port shown in your terminal)
-
-### Build for Production
+4. Build for production:
 
 ```bash
 npm run build
 ```
 
-The optimized production build will be in the `dist/` folder.
-
-### Preview Production Build
+5. Preview production build:
 
 ```bash
 npm run preview
 ```
 
-## 📁 Project Structure
+## Supabase Configuration (Optional)
 
-```
-lumina-crm/
-├── src/
-│   ├── components/
-│   │   └── Layout.tsx          # Main app layout with sidebar navigation
-│   ├── pages/
-│   │   ├── Dashboard.tsx       # Analytics dashboard with charts
-│   │   └── Leads.tsx          # Lead management with CRUD operations
-│   ├── store/
-│   │   └── useStore.ts        # Zustand store with state management
-│   ├── App.tsx                # Main app component with routing
-│   ├── main.tsx              # App entry point
-│   └── index.css             # Global styles and Tailwind imports
-├── index.html                # HTML template
-├── package.json              # Dependencies and scripts
-├── tailwind.config.js        # Tailwind CSS configuration
-├── tsconfig.json            # TypeScript configuration
-└── vite.config.ts           # Vite build configuration
+The app runs without Supabase using mock data.
+
+To enable live persistence + realtime, create a `.env` file in project root:
+
+```bash
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## 🛠️ Tech Stack
+When not configured, the UI shows: `Running in Mock Mode (Connect Supabase for persistence)`.
 
-- **Framework**: React 18.3.1 with TypeScript
-- **Build Tool**: Vite 5.4.10
-- **Styling**: Tailwind CSS 3.4.14
-- **State Management**: Zustand 5.0.1 with persist middleware
-- **Charts**: Recharts 2.13.3
-- **Icons**: Lucide React 0.454.0
-- **Animations**: Framer Motion 11.11.11
-- **Utilities**: clsx, tailwind-merge
+## Project Structure
 
-## 💡 Usage Guide
+```text
+.
+├── index.html
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── src
+    ├── App.tsx
+    ├── main.tsx
+    ├── index.css
+    ├── components
+    │   └── Layout.tsx
+    ├── lib
+    │   └── supabase.ts
+    ├── pages
+    │   ├── Dashboard.tsx
+    │   ├── Leads.tsx
+    │   ├── Pipelines.tsx
+    │   └── Analytics.tsx
+    ├── store
+    │   └── useStore.ts
+    └── types
+        └── index.ts
+```
 
-### Dashboard
-The dashboard provides an at-a-glance view of your business:
-- View key metrics cards showing pipeline value, active leads, conversion rate, and average deal size
-- Analyze trends with the revenue forecast chart
-- See your top 3 high-value opportunities
-- Review leads requiring attention
-- Track recent successful deals
+## Data Model
 
-### Lead Management
-Navigate to the "Leads" section from the sidebar to:
-- **Add New Leads**: Click "Add New Lead" button and fill in the form
-- **Search & Filter**: Use the search bar and status filter to find specific leads
-- **Edit Leads**: Click the three-dot menu on any lead row and select "Edit"
-- **Delete Leads**: Click the three-dot menu and select "Delete" (with confirmation)
-- **View Details**: See comprehensive information for each lead in the table
+Core lead fields (`src/types/index.ts`):
 
-### Lead Statuses
-- **New**: Freshly acquired lead
-- **Contacted**: Initial contact made
-- **Qualified**: Lead meets criteria and budget
-- **Proposal**: Proposal/quote sent
-- **Negotiation**: In active negotiations
-- **Won**: Deal successfully closed
-- **Lost**: Opportunity lost to competitor or budget
+- `id`, `name`, `company`, `email`, `phone`
+- `value`, `score`, `industry`, `notes`
+- `status`: `new | contacted | qualified | proposal | negotiation | won | lost`
+- `contactDate`, `createdAt`, `updatedAt`
 
-## 🎯 Key Features Implemented
+## Current App Flow
 
-✅ Full CRUD operations for customer/lead management  
-✅ Real-time analytics with computed metrics  
-✅ Interactive charts and data visualization  
-✅ Search and filter functionality  
-✅ LocalStorage persistence  
-✅ Responsive design  
-✅ Modal forms for add/edit operations  
-✅ Delete confirmation dialogs  
-✅ State management with Zustand  
-✅ Clean, modern UI with Tailwind CSS  
-✅ TypeScript for type safety  
-✅ Sample data for testing  
+- `App.tsx` initializes leads via `fetchLeads()` and subscribes to Supabase realtime updates when available.
+- `Layout.tsx` controls page navigation and global search query updates.
+- `Leads.tsx` uses store selectors for filtered leads and modal-based CRUD actions.
+- `Pipelines.tsx` provides stage-based drag-and-drop movement between statuses.
+- `Analytics.tsx` and `Dashboard.tsx` use computed selectors from the store.
 
-## 📊 Analytics Calculations
+## Notes
 
-- **Total Pipeline**: Sum of all active leads (excludes won/lost)
-- **Active Leads**: Count of leads not in won/lost status
-- **Conversion Rate**: (Won deals / Total closed deals) × 100
-- **Average Deal Size**: Total pipeline value / Active leads count
-- **Revenue by Status**: Aggregated value grouped by lead status
-- **Revenue Over Time**: 7-day trend of pipeline value
-
-## 🎨 Design Highlights
-
-- **Color Palette**: Purple primary (#9E7FFF), with cyan, pink accents
-- **Dark Theme**: Background (#171717), Surface (#262626)
-- **Typography**: Inter font family for clean, modern text
-- **Border Radius**: Generous rounded corners (xl, 2xl)
-- **Glass Panels**: Semi-transparent backgrounds with backdrop blur
-- **Animations**: Smooth transitions and micro-interactions
-
-## 🔮 Future Enhancements
-
-Potential features for future development:
-- Pipeline visualization with drag-and-drop
-- Email integration for lead communication
-- Task management and reminders
-- Advanced reporting and exports
-- Team collaboration features
-- Integration with external CRM systems
-- File attachments for leads
-- Activity timeline for each lead
-- Custom fields and tags
-- Advanced search with multiple filters
-
-## 📝 License
-
-This project was created as part of the Byteable AI Engineering Challenge.
-
-## 🙋 Support
-
-For questions or issues:
-1. Check the code comments for implementation details
-2. Review the TypeScript types in `useStore.ts` for data structures
-3. Examine component props and state management
-
-## 🎓 Learning Resources
-
-- [React Documentation](https://react.dev/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-- [Zustand Guide](https://docs.pmnd.rs/zustand/getting-started/introduction)
-- [Recharts Examples](https://recharts.org/en-US/examples)
-
----
-
-**Built with ❤️ using Byteable AI tools**
+- State is persisted using `zustand/persist` with key `lumina-crm-storage`.
+- In mock mode, data changes are local/in-memory (plus persisted UI state) and do not sync to Supabase.

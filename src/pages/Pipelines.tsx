@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -7,13 +8,12 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   DragStartEvent,
-  DragOverEvent,
   DragEndEvent,
   defaultDropAnimationSideEffects,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -54,36 +54,35 @@ export const Pipelines = () => {
     setActiveId(event.active.id as string);
   }, []);
 
-  const handleDragOver = useCallback((event: DragOverEvent) => {
+  const resolveTargetStatus = useCallback(
+    (overId: string): LeadStatus | undefined => {
+      const isOverAColumn = COLUMNS.some((col) => col.id === overId);
+      if (isOverAColumn) return overId as LeadStatus;
+
+      const overLead = leads.find((l) => l.id === overId);
+      return overLead?.status;
+    },
+    [leads]
+  );
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
+
+    setActiveId(null);
     if (!over) return;
 
     const activeId = active.id as string;
     const overId = over.id as string;
 
-    const activeLead = leads.find(l => l.id === activeId);
+    const activeLead = leads.find((l) => l.id === activeId);
     if (!activeLead) return;
 
-    // Find if we are over a column container or a specific card
-    const isOverAColumn = COLUMNS.some(col => col.id === overId);
-    let newStatus: LeadStatus | undefined;
+    const newStatus = resolveTargetStatus(overId);
 
-    if (isOverAColumn) {
-      newStatus = overId as LeadStatus;
-    } else {
-      const overLead = leads.find(l => l.id === overId);
-      newStatus = overLead?.status;
-    }
-
-    // Only update if the status actually changed to prevent infinite loops
     if (newStatus && activeLead.status !== newStatus) {
       updateLead(activeId, { status: newStatus });
     }
-  }, [leads, updateLead]);
-
-  const handleDragEnd = useCallback(() => {
-    setActiveId(null);
-  }, []);
+  }, [leads, resolveTargetStatus, updateLead]);
 
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
@@ -119,7 +118,6 @@ export const Pipelines = () => {
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
             {COLUMNS.map((column) => (
@@ -138,7 +136,7 @@ export const Pipelines = () => {
                   </button>
                 </div>
 
-                <div className="flex-1 bg-surface/10 rounded-xl border border-dashed border-border/50 p-2">
+                <DroppableColumn id={column.id}>
                   <SortableContext
                     id={column.id}
                     items={leads.filter(l => l.status === column.id).map(l => l.id)}
@@ -152,7 +150,7 @@ export const Pipelines = () => {
                         ))}
                     </div>
                   </SortableContext>
-                </div>
+                </DroppableColumn>
               </div>
             ))}
             
@@ -170,6 +168,21 @@ export const Pipelines = () => {
           </DndContext>
         </div>
       </div>
+    </div>
+  );
+};
+
+const DroppableColumn = ({ id, children }: { id: LeadStatus; children: ReactNode }) => {
+  const { isOver, setNodeRef } = useDroppable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex-1 rounded-xl border border-dashed p-2 transition-colors ${
+        isOver ? 'bg-primary/10 border-primary/50' : 'bg-surface/10 border-border/50'
+      }`}
+    >
+      {children}
     </div>
   );
 };
